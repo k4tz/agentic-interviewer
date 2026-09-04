@@ -78,6 +78,27 @@ Choose one application launch method. To containerize a custom configuration, al
 
 Open the [interview application](http://127.0.0.1:8000/) or the [API documentation](http://127.0.0.1:8000/docs). Select a job, upload a synthetic resume, complete the microphone check, and begin the interview.
 
+## UI
+A simple UI has been setup to test the interview process, please see examples below. 
+
+#### Example: Uploading resume
+
+Upload your resume for a job to start.
+
+![Resume Uploading Stage](docs/resume_stage.png)
+
+#### Example: Check for mic and camera
+
+After uploading resume, test for mic and camera and permissions.
+
+![Device testing stage](docs/out_of_scope.png)
+
+#### Example: Interview Starts
+
+Once device is confirmed working, begin voiced interview.
+
+![Interviewing stage](docs/interviewing_stage.png)
+
 ## Documentation
 
 See the [Project Guide](docs/PROJECT_GUIDE.md) for architecture, configuration, provider integration, and operating details. The [docs folder](docs/) contains the release checklist, security guidance, runbooks, design decisions, and evaluation reports.
