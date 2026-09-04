@@ -91,7 +91,7 @@ Upload your resume for a job to start.
 
 After uploading resume, test for mic and camera and permissions.
 
-![Device testing stage](docs/out_of_scope.png)
+![Device testing stage](docs/device_check_stage.png)
 
 #### Example: Interview Starts
 
