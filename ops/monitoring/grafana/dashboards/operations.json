@@ -1,0 +1,32 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Admission rejection rate (5m)",
+      "targets": [{"expr": "sum(rate(interviewer_admission_rejections_total[5m])) / clamp_min(sum(rate(interviewer_admission_attempts_total[5m])), 1)"}],
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+    },
+    {
+      "type": "timeseries",
+      "title": "Budget warnings and exhaustion",
+      "targets": [
+        {"expr": "sum by (dimension) (rate(interviewer_budget_warning_total[5m]))", "legendFormat": "warning {{dimension}}"},
+        {"expr": "sum by (dimension) (rate(interviewer_budget_exceeded_total[5m]))", "legendFormat": "exceeded {{dimension}}"}
+      ],
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+    },
+    {
+      "type": "timeseries",
+      "title": "Provider latency p95",
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, capability) (rate(interviewer_provider_latency_ms_bucket[5m])))"}],
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["agentic-interviewer", "operations"],
+  "title": "Agentic Interviewer Operations",
+  "uid": "interviewer-operations",
+  "version": 1
+}

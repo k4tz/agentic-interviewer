@@ -1,0 +1,29 @@
+groups:
+  - name: interviewer-operational
+    rules:
+      - alert: TelemetryCollectorUnavailable
+        expr: up{job="otel-collector"} == 0
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: OpenTelemetry collector is unavailable
+          runbook: docs/runbooks/telemetry.md
+      - alert: AdmissionRejectionRateHigh
+        expr: >-
+          sum(rate(interviewer_admission_rejections_total[5m]))
+          / clamp_min(sum(rate(interviewer_admission_attempts_total[5m])), 1) > 0.05
+        for: 10m
+        labels:
+          severity: ticket
+        annotations:
+          summary: More than five percent of admissions are rejected
+          runbook: docs/runbooks/capacity.md
+      - alert: SessionBudgetExhaustionHigh
+        expr: sum(increase(interviewer_budget_exceeded_total[15m])) > 5
+        for: 5m
+        labels:
+          severity: ticket
+        annotations:
+          summary: Multiple sessions exhausted a hard budget
+          runbook: docs/runbooks/budgets.md

@@ -1,0 +1,106 @@
+{
+  "name": "interviewer-answer-analysis-v1",
+  "schema_version": 1,
+  "cases": [
+    {
+      "question": "Tell me about a production AI system you built and what you personally owned.",
+      "answer": "I owned a retrieval API from ingestion through monitoring, created the evaluation set, and reduced p95 latency by 30 percent.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "How did you evaluate whether the retrieval system was working well?",
+      "answer": "We tested it.",
+      "expected_disposition": "insufficient"
+    },
+    {
+      "question": "What trade-off did you make when choosing the vector database?",
+      "answer": "I compared managed filtering and operational cost, then chose Postgres with pgvector because our scale did not justify another datastore.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "Describe a failure you encountered while deploying an agent workflow.",
+      "answer": "The first deployment looped after tool errors. I added a call budget, typed error states, and an escalation path, which eliminated runaway sessions.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "Which monitoring signals did you use after launch?",
+      "answer": "Latency and errors.",
+      "expected_disposition": "follow_up"
+    },
+    {
+      "question": "How did you protect customer data in prompts?",
+      "answer": "I do not know; I would like to move on.",
+      "expected_disposition": "skip"
+    },
+    {
+      "question": "How did you decide when an agent should call a tool?",
+      "answer": "Blue factory seven umbrella walks database quickly.",
+      "expected_disposition": "gibberish"
+    },
+    {
+      "question": "What did you do when structured output validation failed?",
+      "answer": "I logged the validation code and retried once with the schema error, then failed closed instead of accepting an unverified answer.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "Tell me about a time an evaluation changed your design.",
+      "answer": "Groundedness fell on long documents, so I added section-aware chunking and reranking; the labeled pass rate rose from 71 to 86 percent.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "How did you handle duplicate background jobs?",
+      "answer": "We used idempotency keys and a unique database constraint around the external operation.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "Why did you choose FastAPI for that service?",
+      "answer": "It was good and Python was already there.",
+      "expected_disposition": "follow_up"
+    },
+    {
+      "question": "What was the most difficult PostgreSQL performance issue you resolved?",
+      "answer": "A tenant-scoped query scanned a large events table. I added the matching composite index and verified the plan and p95 before rollout.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "How did you control model cost in production?",
+      "answer": "I routed simple extraction to a smaller model, capped tokens, cached stable prompts, and tracked cost per completed workflow.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "Describe how you tested concurrency before release.",
+      "answer": "I sent some requests and watched the server.",
+      "expected_disposition": "follow_up"
+    },
+    {
+      "question": "How did you recover from a queue backlog?",
+      "answer": "I cannot recall that incident well enough to answer, so please continue to the next question.",
+      "expected_disposition": "skip"
+    },
+    {
+      "question": "What was your role in the API migration?",
+      "answer": "I designed the compatibility layer, migrated two consumers, and owned the rollback plan; the team completed the cutover without downtime.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "How did you measure speech-to-text quality?",
+      "answer": "I used word error rate on accented and noisy interview clips, then reviewed named entities separately because they affected scoring evidence.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "What would you improve in your previous agent architecture?",
+      "answer": "The orchestration.",
+      "expected_disposition": "insufficient"
+    },
+    {
+      "question": "How did you prevent one tenant from consuming all inference capacity?",
+      "answer": "I applied global and per-tenant admission limits, returned explicit capacity errors, and measured queue time instead of silently falling back.",
+      "expected_disposition": "accept"
+    },
+    {
+      "question": "Tell me about a technical decision you reversed.",
+      "answer": "After load tests showed our agent framework added unnecessary calls, I replaced that path with a bounded state machine and cut median turn latency by 22 percent.",
+      "expected_disposition": "accept"
+    }
+  ]
+}

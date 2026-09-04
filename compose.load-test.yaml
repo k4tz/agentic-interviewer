@@ -1,0 +1,9 @@
+services:
+  app:
+    environment:
+      # The standard harness creates fresh sessions outside each timed window.
+      # Keep control-plane throttling from masking inference-service saturation.
+      RATE_LIMIT_CAPACITY: "10000"
+      RATE_LIMIT_REFILL_PER_SECOND: "1000"
+      MAX_CONCURRENT_MODEL_CALLS: "16"
+      MAX_CONCURRENT_MODEL_CALLS_PER_TENANT: "16"

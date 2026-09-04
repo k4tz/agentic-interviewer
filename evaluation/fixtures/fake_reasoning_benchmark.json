@@ -1,0 +1,7 @@
+{
+  "name": "fake-reasoning-smoke-v1",
+  "iterations": 100,
+  "prompt": "Render the next approved interview question",
+  "max_input_tokens": 32,
+  "max_output_tokens": 16
+}

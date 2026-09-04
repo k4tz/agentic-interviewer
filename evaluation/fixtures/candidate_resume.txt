@@ -1,0 +1,7 @@
+Jordan Lee
+
+Platform and AI application engineer with seven years of Python experience. Designed FastAPI
+services, PostgreSQL schemas, and queue-backed workflows for production systems. Led a migration
+that reduced API p95 latency by 35 percent, added OpenTelemetry dashboards, and improved incident
+response through measurable service-level objectives. Built provider-neutral LLM integrations with
+structured outputs, evaluation fixtures, cost budgets, and deterministic fallback paths.

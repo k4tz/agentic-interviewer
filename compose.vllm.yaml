@@ -1,0 +1,84 @@
+x-vllm-common: &vllm-common
+  image: vllm/vllm-openai:v0.26.0
+  gpus: all
+  ipc: host
+  shm_size: 4gb
+  restart: "no"
+  environment:
+    # vLLM 0.26's V2 runner requires UVA, which Docker Desktop/WSL2 does not expose here.
+    # Keep vLLM scheduling/continuous batching while selecting its supported V1 runner.
+    VLLM_USE_V2_MODEL_RUNNER: "0"
+  ports:
+    - "127.0.0.1:8080:8000"
+  volumes:
+    - vllm-model-cache:/root/.cache/huggingface
+  healthcheck:
+    test:
+      - CMD
+      - python3
+      - -c
+      - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+    interval: 10s
+    timeout: 3s
+    retries: 90
+    start_period: 30s
+
+services:
+  vllm-q4:
+    <<: *vllm-common
+    profiles: ["q4"]
+    command:
+      - RedHatAI/Mistral-7B-Instruct-v0.3-quantized.w4a16
+      - --revision
+      - aff481973dbd56b97c6538e06556fb5e3dab939e
+      - --tokenizer
+      - RedHatAI/Mistral-7B-Instruct-v0.3-quantized.w4a16
+      - --tokenizer-revision
+      - aff481973dbd56b97c6538e06556fb5e3dab939e
+      - --served-model-name
+      - mistral-7b-instruct-v0.3-q4
+      - --quantization
+      - gptq
+      - --max-model-len
+      - "8192"
+      - --max-num-seqs
+      - "16"
+      - --gpu-memory-utilization
+      - ${VLLM_Q4_GPU_MEMORY_UTILIZATION:-0.90}
+      - --enable-prefix-caching
+      - --enable-per-request-metrics
+      - --generation-config
+      - vllm
+      - --seed
+      - "42"
+
+  vllm-q8:
+    <<: *vllm-common
+    profiles: ["q8"]
+    command:
+      - RedHatAI/Mistral-7B-Instruct-v0.3-quantized.w8a16
+      - --revision
+      - 5079e6662632d88ac726516beccf202c925402a0
+      - --tokenizer
+      - RedHatAI/Mistral-7B-Instruct-v0.3-quantized.w4a16
+      - --tokenizer-revision
+      - aff481973dbd56b97c6538e06556fb5e3dab939e
+      - --served-model-name
+      - mistral-7b-instruct-v0.3-q8
+      - --quantization
+      - gptq
+      - --max-model-len
+      - "8192"
+      - --max-num-seqs
+      - "16"
+      - --gpu-memory-utilization
+      - ${VLLM_Q8_GPU_MEMORY_UTILIZATION:-0.90}
+      - --enable-prefix-caching
+      - --enable-per-request-metrics
+      - --generation-config
+      - vllm
+      - --seed
+      - "42"
+
+volumes:
+  vllm-model-cache:

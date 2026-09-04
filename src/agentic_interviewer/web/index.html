@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <title>Candidate Interview · Northstar</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 fill=%22%23101923%22/><text x=%2216%22 y=%2222%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2218%22 font-weight=%22700%22 fill=%22white%22>N</text></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#stage">Skip to interview setup</a>
+  <header class="masthead">
+    <a class="wordmark" href="/" aria-label="Northstar candidate interviews">
+      <span class="wordmark-mark" aria-hidden="true">N</span>
+      <span>Northstar <small>Candidate interviews</small></span>
+    </a>
+    <div class="system-state" aria-live="polite">
+      <span class="state-dot" id="systemDot"></span>
+      <span><strong id="systemLabel">Preparing</strong><small id="systemDetail">Checking the application</small></span>
+    </div>
+  </header>
+
+  <main class="interview-shell" id="stage">
+    <aside class="phase-rail" aria-label="Interview setup progress">
+      <p class="rail-label">Your progress</p>
+      <ol>
+        <li class="phase is-current" data-phase="upload" aria-current="step">
+          <span>01</span><div><strong>Resume</strong><small>Choose a role</small></div>
+        </li>
+        <li class="phase" data-phase="device">
+          <span>02</span><div><strong>Device check</strong><small>Microphone required</small></div>
+        </li>
+        <li class="phase" data-phase="interview">
+          <span>03</span><div><strong>Interview</strong><small>Structured voice session</small></div>
+        </li>
+      </ol>
+      <div class="privacy-note">
+        <span aria-hidden="true">⌁</span>
+        <p><strong>Server mediated</strong>Your provider credentials stay on the server. Camera access is optional.</p>
+      </div>
+    </aside>
+
+    <section class="stage-surface">
+      <section class="stage-panel is-active" id="uploadStage" data-stage="upload" aria-labelledby="uploadTitle">
+        <div class="stage-kicker"><span>Step 01</span><span>About 2 minutes</span></div>
+        <div class="stage-heading">
+          <p class="eyebrow">Interview briefing</p>
+          <h1 id="uploadTitle">Start with your resume.</h1>
+          <p>Choose the role and share your resume, then continue directly to the device check.</p>
+        </div>
+
+        <form id="intakeForm" class="intake-form">
+          <div class="field-block">
+            <label for="jobSelect">Role</label>
+            <select id="jobSelect" name="job_id" required disabled>
+              <option value="">Loading available roles…</option>
+            </select>
+          </div>
+
+          <article class="job-brief" id="jobBrief" aria-live="polite">
+            <div class="job-brief-skeleton">Loading job details…</div>
+          </article>
+
+          <label class="upload-zone" id="uploadZone" for="resumeInput">
+            <input id="resumeInput" name="resume" type="file" accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown" required>
+            <span class="upload-glyph" aria-hidden="true">↑</span>
+            <span class="upload-copy"><strong id="uploadTitleText">Drop your resume here</strong><small id="uploadHint">PDF, TXT, or Markdown · up to 5 MB</small></span>
+            <span class="upload-action">Choose file</span>
+          </label>
+
+          <div class="form-footer">
+            <p class="status-copy" id="intakeStatus" role="status">Your interview is not created until you continue.</p>
+            <button class="button button-primary" id="prepareButton" type="submit" disabled>
+              <span>Continue to device check</span><span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="stage-panel" id="deviceStage" data-stage="device" aria-labelledby="deviceTitle" hidden>
+        <div class="stage-kicker"><span>Step 02</span><span id="preparedCount">Check your setup</span></div>
+        <div class="stage-heading compact-heading">
+          <p class="eyebrow">Device check</p>
+          <h1 id="deviceTitle">Make sure we can hear you.</h1>
+          <p>Your microphone is required. Camera preview is optional and remains in this browser for now.</p>
+        </div>
+
+        <div class="device-grid">
+          <article class="device-row" id="micDevice" data-state="idle">
+            <div class="device-icon" aria-hidden="true">MIC</div>
+            <div class="device-copy"><strong>Microphone</strong><p id="micDetail">Permission has not been checked.</p></div>
+            <div class="level-meter" aria-label="Microphone input level"><span id="levelBar"></span></div>
+            <button class="button button-secondary" id="checkMicButton" type="button">Check microphone</button>
+          </article>
+
+          <article class="device-row" id="cameraDevice" data-state="optional">
+            <div class="device-icon" aria-hidden="true">CAM</div>
+            <div class="device-copy"><strong>Camera <em>Optional</em></strong><p id="cameraDetail">Not requested. You can continue without it.</p></div>
+            <div class="camera-preview" id="cameraPreview" hidden><video id="cameraVideo" muted playsinline></video></div>
+            <button class="button button-secondary" id="cameraButton" type="button">Enable preview</button>
+          </article>
+        </div>
+
+        <div class="preflight-note">
+          <span aria-hidden="true">i</span>
+          <p><strong>Before you begin</strong>Find a quiet place and use headphones if possible. The interview asks one question at a time.</p>
+        </div>
+
+        <div class="planning-warning" id="planningWarning" role="alert" hidden>
+          <span aria-hidden="true">!</span>
+          <div>
+            <strong>Setup needs attention</strong>
+            <p id="planningWarningText">Return to the previous step and try again.</p>
+            <label hidden><input id="planningAcknowledgement" type="checkbox"> Acknowledge setup status.</label>
+          </div>
+        </div>
+
+        <div class="form-footer device-footer">
+          <button class="text-button" id="backButton" type="button">← Change resume</button>
+          <button class="button button-primary" id="beginButton" type="button" disabled>
+            <span>Begin interview</span><span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="stage-panel interview-panel" id="interviewStage" data-stage="interview" aria-labelledby="questionText" hidden>
+        <header class="session-header">
+          <div><span class="live-marker"><i></i>Live interview</span><strong id="sessionRole">Role</strong></div>
+          <div class="session-progress"><span id="questionCounter">Question 1 of 11</span><span id="elapsedTime">00:00</span></div>
+        </header>
+
+        <div class="question-space">
+          <p class="eyebrow" id="speakerLabel">Interviewer</p>
+          <h1 id="questionText">Preparing your first question…</h1>
+          <button class="text-button replay-button" id="replayButton" type="button" hidden>Replay question</button>
+        </div>
+
+        <div class="audio-thread" id="audioThread" data-mode="connecting" aria-live="polite">
+          <div class="thread-line" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="thread-copy"><strong id="threadLabel">Connecting to speech service</strong><small id="threadDetail">Keep this tab open</small></div>
+        </div>
+
+        <section class="answer-space" aria-labelledby="answerTitle">
+          <div class="answer-heading"><h2 id="answerTitle">Your answer</h2><span id="answerTimer">Ready</span></div>
+          <p class="live-transcript" id="liveTranscript">Your microphone starts automatically after each question. A short silence ends your turn.</p>
+          <div class="answer-actions">
+            <button class="record-button" id="recordButton" type="button" disabled>
+              <span class="record-dot" aria-hidden="true"></span><span id="recordLabel">Done speaking</span>
+            </button>
+            <button class="text-button" id="typeFallbackButton" type="button">Type instead</button>
+          </div>
+          <form class="typed-answer" id="typedAnswerForm" hidden>
+            <label for="typedAnswer">Type your answer</label>
+            <textarea id="typedAnswer" rows="5" maxlength="20000" placeholder="Write your response here…"></textarea>
+            <div><button class="text-button" id="cancelTypedButton" type="button">Cancel</button><button class="button button-primary" type="submit">Submit answer</button></div>
+          </form>
+        </section>
+
+        <ol class="conversation-log" id="conversationLog" aria-label="Interview transcript" aria-live="polite"></ol>
+      </section>
+
+      <section class="stage-panel completion-panel" id="completionStage" data-stage="complete" hidden>
+        <div class="completion-mark" aria-hidden="true">✓</div>
+        <p class="eyebrow">Interview complete</p>
+        <h1>Thank you for your time.</h1>
+        <p>Your responses have been recorded for the structured review process. You may now close this tab.</p>
+        <div class="completion-summary"><span>Role</span><strong id="completedRole">—</strong><span>Questions answered</span><strong id="completedAnswers">—</strong></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="alert" hidden></div>
+  <noscript>This interview requires JavaScript for resume upload and microphone capture.</noscript>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: interviewer
+      POSTGRES_USER: interviewer
+      POSTGRES_PASSWORD: interviewer
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./ops/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U interviewer -d interviewer"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+      PROVIDER_PROFILE: local-specialized
+      DATABASE_URL: postgresql://interviewer:interviewer@postgres:5432/interviewer
+      CANDIDATE_UI_ENABLED: "true"
+      REASONING_PROVIDER_NAME: vllm
+      REASONING_BASE_URL: http://host.docker.internal:8080
+      REASONING_MODEL: ${REASONING_MODEL:-mistral-7b-instruct-v0.3-q4}
+      REASONING_REGION: local
+      REASONING_EXTERNAL_PROCESSING: "false"
+      REASONING_RETAINS_PROVIDER_DATA: "false"
+      REASONING_CHECK_HEALTH_ENDPOINT: "true"
+      SPEACHES_BASE_URL: http://speaches:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - app-data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      speaches:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  speaches:
+    image: ${SPEACHES_IMAGE:-ghcr.io/speaches-ai/speaches:latest-cuda-12.6.3}
+    environment:
+      WHISPER__INFERENCE_DEVICE: cuda
+      WHISPER__COMPUTE_TYPE: float16
+      WHISPER__NUM_WORKERS: 1
+      # The measured first CUDA request performs expensive kernel initialization.
+      # Keep both Whisper and Kokoro resident after warm-up while this profile is active.
+      WHISPER__TTL: -1
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      ENABLE_UI: "false"
+    ports:
+      - "127.0.0.1:8001:8000"
+    volumes:
+      - speaches-model-cache:/home/ubuntu/.cache/huggingface/hub
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  app-data:
+  postgres-data:
+  speaches-model-cache:
